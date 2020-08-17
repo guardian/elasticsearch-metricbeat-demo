@@ -1,0 +1,9 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+setup.kibana:
+  host: "host.docker.internal:5601"

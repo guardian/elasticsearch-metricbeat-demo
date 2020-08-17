@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+INDEX_NAME=users
+
+START=${1:-1}
+END=${2:-10}
+
+for (( i=$START; i<=$END; i++ ))
+do
+   curl -X PUT "http://localhost:9200/$INDEX_NAME/_doc/$i?pretty" -H 'Content-Type: application/json' -d "{ \"username\": \"user-$i\" }"
+done

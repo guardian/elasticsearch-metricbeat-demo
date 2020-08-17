@@ -1,0 +1,16 @@
+# see https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-module-elasticsearch.html
+- module: elasticsearch
+  metricsets:
+    - ccr
+    - cluster_stats
+    - enrich
+    - index
+    - index_recovery
+    - index_summary
+    - ml_job
+    - node
+    - node_stats
+    - pending_tasks
+    - shard
+  period: 10s
+  hosts: ["http://elasticsearch:9200"]

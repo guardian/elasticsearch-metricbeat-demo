@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTICSEARCH_VERSION: $ELASTICSEARCH_VERSION
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/script/add-demo-data:/usr/local/bin/add-demo-data
+      - ./elasticsearch/script/cat-count:/usr/local/bin/cat-count
+    expose:
+      - 9200
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx2048m"
+  metricbeat:
+    build:
+      context: metricbeat/
+      args:
+        METRICBEAT_VERSION: $METRICBEAT_VERSION
+    volumes:
+      - ./metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      - ./metricbeat/config/modules.d/elasticsearch.yml:/usr/share/metricbeat/modules.d/elasticsearch.yml
+    depends_on: 
+      - elasticsearch
+      - logstash
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx2048m"
+  logstash:
+    build:
+      context: logstash/
+      args:
+        LOGSTASH_VERSION: $LOGSTASH_VERSION
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+
+      # we're using a kinesis stream in localstack,
+      # valid credentials are not needed
+      AWS_ACCESS_KEY_ID: 'not-used'
+      AWS_SECRET_ACCESS_KEY: 'not-used'
+      
+      # kinesalite does not support the CBOR protocol
+      # see https://github.com/localstack/localstack#troubleshooting
+      AWS_CBOR_DISABLE: 'true'
+    expose: 
+      - 5044
+    depends_on:
+      - elasticsearch

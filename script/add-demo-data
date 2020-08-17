@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+START=${1:-1}
+END=${2:-10}
+
+docker-compose exec elasticsearch add-demo-data $START $END
