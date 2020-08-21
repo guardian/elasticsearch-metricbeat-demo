@@ -7,3 +7,6 @@ output.logstash:
 
 setup.kibana:
   host: "host.docker.internal:5601"
+
+codec.json:
+  pretty: false
